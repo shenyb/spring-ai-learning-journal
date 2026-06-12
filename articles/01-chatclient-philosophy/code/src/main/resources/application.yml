@@ -1,0 +1,22 @@
+spring:
+  ai:
+    chat:
+      # 方案 A：Ollama 本地模型（推荐起步）
+      client: ollama
+      ollama:
+        chat:
+          options:
+            model: qwen2.5:7b
+
+      # 方案 B：DeepSeek（有 key 的话）
+      # client: deepseek
+      # deepseek:
+      #   api-key: ${DEEPSEEK_API_KEY}
+      #   chat:
+      #     options:
+      #       model: deepseek-chat
+
+      # 方案 C：OpenAI
+      # client: openai
+      # openai:
+      #   api-key: ${OPENAI_API_KEY}
