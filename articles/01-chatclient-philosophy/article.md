@@ -43,25 +43,24 @@ String result = ChatClient.create(chatModel)
 
 ---
 
+> **📐 配套架构图** — 本篇文章配有一张交互式 SVG 架构图，涵盖四层架构、Advisors 链和设计理念三大板块。打开 `spring-ai-architecture.html` 在浏览器中查看（可交互缩放），或看下面的静态截图：
+>
+> ![Spring AI 架构图](spring-ai-architecture.png)
+
+---
+
 ## Spring AI 的四层架构
 
 拆开 Spring AI 的骨架，从底到顶分为四层。ChatClient 只是最上面那层：
 
-```
-┌─────────────────────────────────────────┐
-│  ChatClient                             │  ← 你写的业务代码接触的层
-│  (Fluent API, Builder, Advisors 编排)   │
-├─────────────────────────────────────────┤
-│  ChatModel                              │  ← 跨 Provider 的抽象接口
-│  (OllamaChatModel / OpenAiChatModel)    │
-├─────────────────────────────────────────┤
-│  Model 客户端层                          │  ← 每个 Provider 各自的 SDK
-│  (Ollama API / OpenAI SDK / Anthropic)  │
-├─────────────────────────────────────────┤
-│  HTTP 传输层                             │  ← 底层网络
-│  (RestClient / WebClient)               │
-└─────────────────────────────────────────┘
-```
+| 层级 | 角色 | 类比 |
+|------|------|------|
+| **ChatClient** | Fluent API，你写的业务代码接触的层 | Controller → Service 中的 facade |
+| **ChatModel** | 跨 Provider 的抽象接口 | JDBC 驱动接口 |
+| **Provider 客户端层** | 各家 SDK / HTTP 封装 | 具体的 JDBC 驱动实现 |
+| **HTTP 传输层** | 底层网络通信 | TCP/IP |
+
+> 完整的可视化结构见上方的架构图，左侧即为这四层。
 
 这个分层架构揭示了 Spring AI 的设计选择：
 
@@ -195,9 +194,7 @@ chatMemory.put(conversationId, query, response);
 
 Advisors 本质上是一个**责任链模式**——跟 Servlet Filter、Spring AOP、Zuul Filter 是同一类东西：
 
-```
-请求进入 → [MemoryAdvisor] → [RAGAdvisor] → [SafetyAdvisor] → ChatModel → 响应出去
-```
+> 上图右侧展示了完整的 Advisors 链调用流程：请求从上到下经过 Memory → RAG → Safety 三个 Advisor 逐层处理，增强后的 Prompt 到达 ChatModel，响应再按原路返回逐层后处理。
 
 每个 Advisor 在请求到达 ChatModel 之前做前处理，在响应回来之后做后处理。多个 Advisor 可以组合成一条链，顺序可以配置。
 
@@ -477,12 +474,16 @@ ChatClient 让 Java 开发者不必在「用 Python 写 AI 代理层」和「手
 
 ## 代码仓库
 
-见本目录下的 [code/](./code/)，包含：
+见本目录下的文件：
 
-- `pom.xml` — Spring Boot 4 + Spring AI 2.0.0-M8
-- `Application.java` — 启动类
-- `ChatController.java` — 完整版 Controller（含同步 + 流式 + 多轮对话）
-- `application.yml` — 支持 Ollama / DeepSeek 两种配置
+- [article.md](./article.md) — 文章正文（本文）
+- [spring-ai-architecture.html](./spring-ai-architecture.html) — 交互式 SVG 架构图（浏览器打开）
+- [spring-ai-architecture.png](./spring-ai-architecture.png) — 架构图静态截图
+- [code/](./code/) — 配套可运行项目
+  - `pom.xml` — Spring Boot 4 + Spring AI 2.0.0-M8
+  - `Application.java` — 启动类
+  - `ChatController.java` — 完整版 Controller（含同步 + 流式 + 多轮对话）
+  - `application.yml` — 支持 Ollama / DeepSeek 两种配置
 
 `mvn spring-boot:run` 启动，访问 `http://localhost:8080/chat?message=你好`。
 
