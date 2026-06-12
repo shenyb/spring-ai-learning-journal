@@ -1,0 +1,29 @@
+# Build outputs
+target/
+build/
+bin/
+out/
+
+# IDE
+.idea/
+*.iml
+.vscode/
+*.swp
+*.swo
+*.swn
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Gradle
+.gradle/
+gradle/wrapper/
+
+# Maven
+.mvn/
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+# Logs
+*.log

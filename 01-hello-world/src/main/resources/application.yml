@@ -1,0 +1,20 @@
+spring:
+  ai:
+    chat:
+      # TODO: 配置你的 AI Provider
+      # 方案 A（推荐起步）：用 Ollama 跑本地模型
+      #   1. 安装 Ollama: brew install ollama
+      #   2. 拉模型: ollama pull qwen2.5:7b
+      #   3. 取消下面注释：
+      # client: ollama
+      # ollama:
+      #   chat:
+      #     options:
+      #       model: qwen2.5:7b
+
+      # 方案 B：如果你有 DeepSeek 或 OpenAI key
+      # client: deepseek  # 或 openai
+      # deepseek:
+      #   api-key: ${DEEPSEEK_API_KEY}
+      # openai:
+      #   api-key: ${OPENAI_API_KEY}
